@@ -46,14 +46,18 @@ def seen_search(options, session=None):
     seen_entries = seen.search(value=search_term, status=None, session=session)
     table_data = []
     for se in seen_entries.all():
-        table_data.append(['Entry title', se.title])
+        table_data.append(['Title', se.title])
         for sf in se.fields:
             if sf.field.lower() == 'title':
                 continue
             table_data.append(['{}'.format(sf.field.upper()), str(sf.value)])
+        table_data.append(['Task', se.task])
+        table_data.append(['Added', se.added.strftime('%Y-%m-%d %H:%M')])
         if options.table_type != 'porcelain':
-            table_data.append([''])
+            table_data.append(['', ''])
 
+    if options.table_type != 'porcelain':
+        del table_data[-1]
     table = TerminalTable(options.table_type, table_data, wrap_columns=[1])
     table.table.inner_heading_row_border = False
     if not table_data:
